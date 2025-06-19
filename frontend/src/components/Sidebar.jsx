@@ -1,42 +1,58 @@
+// src/components/Sidebar.jsx
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Sidebar() {
   const { role, logout } = useAuth();
 
-  const links = {
+  // Define links per role
+  const linksByRole = {
     super_vendor: [
-      { to: "/super",    label: "Dashboard" },
-      { to: "/vendors",  label: "Vendors"   },
+      { to: "/super", label: "Main Dashboard" },
+      { to: "/super/users", label: "Users" },
+      { to: "/super/roles", label: "Roles" },
+      { to: "/super/permissions", label: "Permissions" },
+      { to: "/super/profile", label: "Profile" },
     ],
+
     regional_vendor: [
       { to: "/regional", label: "Dashboard" },
-      { to: "/drivers",  label: "Drivers"   },
+      { to: "/drivers", label: "Drivers" },
+      { to: "/profile", label: "Profile" },
     ],
     driver: [
-      { to: "/driver",   label: "My Trips"  },
+      { to: "/driver", label: "My Trips" },
+      { to: "/profile", label: "Profile" },
     ],
-  }[role] || [];
+  };
+
+  const links = linksByRole[role] || [];
 
   return (
-    <aside className="w-60 h-screen bg-slate-800 text-white flex flex-col">
-      <h2 className="p-4 text-xl font-bold border-b border-slate-700">Menu</h2>
-      <nav className="flex-1">
-        {links.map(l => (
+    <aside className="w-60 bg-slate-800 text-white flex flex-col h-screen">
+      <div className="p-4 border-b border-slate-700">
+        <h2 className="text-xl font-bold">Menu</h2>
+      </div>
+
+      <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+        {links.map(({ to, label }) => (
           <NavLink
-            key={l.to}
-            to={l.to}
+            key={to}
+            to={to}
             className={({ isActive }) =>
-              `block px-4 py-2 hover:bg-slate-700 ${isActive ? "bg-slate-700" : ""}`
+              `block px-4 py-2 rounded hover:bg-slate-700 ${
+                isActive ? "bg-slate-700" : ""
+              }`
             }
           >
-            {l.label}
+            {label}
           </NavLink>
         ))}
       </nav>
+
       <button
         onClick={logout}
-        className="m-4 py-2 rounded bg-red-500 hover:bg-red-600 text-center"
+        className="mt-auto m-4 py-2 bg-red-500 rounded hover:bg-red-600 text-center"
       >
         Log out
       </button>
