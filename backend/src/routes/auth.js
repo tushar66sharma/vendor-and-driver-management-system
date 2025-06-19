@@ -65,4 +65,17 @@ router.get("/me", authMw, async (req, res) => {
   res.json(user);
 });
 
+router.patch('/me', authMw, async (req, res) => {
+  const { region } = req.body;
+  if (!['northern','southern','central','eastern','western'].includes(region)) {
+    return res.status(400).json({ message: 'Invalid region' });
+  }
+  const user = await User.findByIdAndUpdate(
+    req.user.userId,
+    { region },
+    { new: true, select: '-passwordHash' }
+  );
+  res.json(user);
+});
+
 module.exports = router;

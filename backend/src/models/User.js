@@ -22,6 +22,11 @@ const userSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+     region: {
+    type: String,
+         enum: ['northern','southern','central','eastern','western'],
+    default: null
+  },
   },
   { timestamps: true }
 );

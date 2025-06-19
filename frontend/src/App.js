@@ -9,6 +9,9 @@ import RegDash from "./pages/RegionalVendorDashBoard.jsx";
 import DriverDash from "./pages/DriverDashBoard.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
 import SuperVendorAllUsers from "./pages/SuperVendorAllUsers.jsx";
+import SuperVendorAllRoles from "./pages/SuperVendorAllRoles.jsx";
+import SuperVendorPermissions from "./pages/SuperVendorPermissions.jsx";
+import SuperVendorProfile from "./pages/SuperVendorProfile.jsx";
 
 /* helper component: send user to the right dashboard */
 function RedirectByRole() {
@@ -38,6 +41,10 @@ export default function App() {
           <Route element={<PrivateRoute allowed={["super_vendor"]} />}>
             <Route path="/super/*" element={<SuperDash />} />
             <Route path="/super/users" element={<SuperVendorAllUsers />} />
+            <Route path="/super/roles" element={<SuperVendorAllRoles />} />
+            <Route path="/super/permissions" element={<SuperVendorPermissions />} />
+            <Route path="/super/profile" element={<SuperVendorProfile />} />
+
           </Route>
 
           <Route element={<PrivateRoute allowed={["regional_vendor"]} />}>

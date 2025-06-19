@@ -3,6 +3,7 @@ const express = require("express");
 const router  = express.Router();
 const Permission     = require("../models/Permission");
 const RolePermission = require("../models/RolePermission");
+const User       = require("../models/User");  
 
 // list all permissions
 router.get("/", async (req, res) => {
@@ -24,8 +25,19 @@ router.post("/", async (req, res) => {
 
 // delete
 router.delete("/:name", async (req, res) => {
-  await Permission.deleteOne({ permissionName: req.params.name });
-  await RolePermission.deleteMany({ permissionName: req.params.name });
+  const name = req.params.name;
+
+  // 1) Prevent deletion if any user has this permission
+  const inUse = await User.exists({ customPermissions: name });
+  if (inUse) {
+    return res
+      .status(400)
+      .json({ msg: "Cannot delete: permission in use by one or more users" });
+  }
+
+  // 2) Safe to delete permission and related role-permissions
+  await Permission.deleteOne({ permissionName: name });
+  await RolePermission.deleteMany({ permissionName: name });
   res.json({ msg: "deleted" });
 });
 

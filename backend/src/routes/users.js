@@ -30,4 +30,31 @@ router.patch('/:id/permissions', async (req, res) => {
   }
 });
 
+
+router.patch('/:id/role', async (req, res) => {
+  try {
+    const { role } = req.body;
+    // prevent demoting a super_vendor
+    const existing = await User.findById(req.params.id);
+    if (!existing) return res.status(404).json({ message: 'User not found' });
+    if (existing.role === 'super_vendor')
+      return res.status(403).json({ message: 'Cannot change super_vendor' });
+
+    // validate incoming role
+    if (!['regional_vendor','city_vendor','local_vendor','driver'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role' });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { role },
+      { new: true, select: 'firstName lastName email role customPermissions' }
+    );
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to update role' });
+  }
+});
+
 module.exports = router;
