@@ -9,17 +9,17 @@ const FUELS   = ['Petrol','Diesel','Electric','Hybrid'];
 export default function RegionalVendorVehicles() {
   const [list, setList] = useState([]);
   const [userRegion, setUserRegion] = useState('');
-  const [msg, setMsg]   = useState('');
+  const [msg, setMsg] = useState('');
 
   const [form, setForm] = useState({
     registrationNumber: '',
     model: '',
     seatingCapacity: '',
     fuelType: 'Petrol',
-    region:   '',
+    region: '',
   });
-  const [files, setFiles] = useState({ permitFile:null, rcFile:null, pollutionFile:null });
 
+  const [files, setFiles] = useState({ permitFile:null, rcFile:null, pollutionFile:null });
   const root = (process.env.REACT_APP_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
 
   useEffect(() => {
@@ -27,38 +27,35 @@ export default function RegionalVendorVehicles() {
       const region = r.data.region || '';
       setUserRegion(region);
       setForm(f => ({ ...f, region }));
+
+      // Fetch region-specific vehicles
       api.get('/vehicles').then(res => {
-        const filtered = res.data.filter(v => v.region === region);
-        setList(filtered);
+        setList(res.data.filter(v => v.region === region));
       });
     });
   }, []);
 
-  const handleChange = e =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-  const handleFile   = e =>
-    setFiles({ ...files, [e.target.name]: e.target.files[0] });
+  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleFile = e => setFiles({ ...files, [e.target.name]: e.target.files[0] });
 
   const handleAdd = async e => {
     e.preventDefault();
     setMsg('');
     try {
       const data = new FormData();
-      const normalizedFuel = form.fuelType.toLowerCase();
       data.append('registrationNumber', form.registrationNumber);
       data.append('model', form.model);
       data.append('seatingCapacity', form.seatingCapacity);
-      data.append('fuelType', normalizedFuel);
-      data.append('region', form.region);
-      Object.entries(files).forEach(([k,f]) => data.append(k, f));
+      data.append('fuelType', form.fuelType.toLowerCase());
+      data.append('region', userRegion); // always use the authenticated user's region
+      Object.entries(files).forEach(([k, f]) => data.append(k, f));
+
       const { data: newVeh } = await api.post('/vehicles', data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+
       setList(prev => [newVeh, ...prev]);
-      setForm({
-        registrationNumber:'', model:'', seatingCapacity:'',
-        fuelType:'Petrol', region:userRegion,
-      });
+      setForm({ registrationNumber:'', model:'', seatingCapacity:'', fuelType:'Petrol', region:userRegion });
       setFiles({ permitFile:null, rcFile:null, pollutionFile:null });
       setMsg('Vehicle added successfully!');
     } catch (err) {
@@ -82,10 +79,11 @@ export default function RegionalVendorVehicles() {
         {msg && (
           <div className="bg-green-100 border border-green-300 text-green-700 px-4 py-2 rounded flex items-center justify-between">
             <span><CheckCircle className="inline w-5 h-5 mr-2" />{msg}</span>
-            <button onClick={()=>setMsg('')}>×</button>
+            <button onClick={() => setMsg('')}>×</button>
           </div>
         )}
 
+        {/* Add Vehicle Form */}
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold mb-4">Add New Vehicle</h2>
           <form onSubmit={handleAdd} className="space-y-4">
@@ -95,15 +93,12 @@ export default function RegionalVendorVehicles() {
               <input name="seatingCapacity" value={form.seatingCapacity} onChange={handleChange} className="border rounded px-3 py-2 w-full" placeholder="Seating Capacity" required />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <select name="region" value={form.region} onChange={handleChange} className="border rounded px-3 py-2 w-full" required>
-                {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
-              </select>
               <select name="fuelType" value={form.fuelType} onChange={handleChange} className="border rounded px-3 py-2 w-full">
                 {FUELS.map(f => <option key={f} value={f}>{f}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {['permitFile','rcFile','pollutionFile'].map((key, i) => (
+              {['permitFile','rcFile','pollutionFile'].map(key => (
                 <div key={key} className="border rounded-lg p-4 flex flex-col items-center">
                   <div className="mb-2 text-gray-600">{key.replace('File','').toUpperCase()}</div>
                   <div className="mb-2 text-sm text-gray-800 truncate h-5">{fileName(files[key])}</div>
@@ -118,13 +113,14 @@ export default function RegionalVendorVehicles() {
           </form>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow overflow-auto">
+        {/* Vehicle Table */}
+        <div className="bg-white p-4 rounded-lg shadow w-full overflow-x-auto">
           <h2 className="text-lg font-semibold mb-4">Vehicle Fleet</h2>
-          <table className="w-full text-sm">
+          <table className="min-w-full text-sm">
             <thead className="bg-gray-200">
               <tr>
-                {['Reg. No.','Model','Seating','Fuel','RC','Permit','Pollution','Status','Actions'].map(h => (
-                  <th key={h} className="p-2">{h}</th>
+                {['Reg. No.','Model','Seating','Fuel','RC','Permit','Pollution','Status','Assigned'].map(h => (
+                  <th key={h} className="p-2 text-left">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -144,7 +140,7 @@ export default function RegionalVendorVehicles() {
                     <span className="inline-block bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Active</span>
                   </td>
                   <td className="p-2">
-                    <button onClick={()=>handleDelete(v._id)} className="text-red-600 hover:bg-red-50 rounded p-1">
+                    <button onClick={() => handleDelete(v._id)} className="text-red-600 hover:bg-red-50 rounded p-1">
                       <XCircle className="inline w-5 h-5" />
                     </button>
                   </td>

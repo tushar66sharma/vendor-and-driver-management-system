@@ -1,4 +1,3 @@
-// src/components/Sidebar.jsx
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
@@ -17,9 +16,9 @@ export default function Sidebar() {
 
     regional_vendor: [
       { to: "/regional", label: "Dashboard" },
-      { to: "/regional/profile", label: "Profile" },
       { to: "/regional/vehicles", label: "Vehicles" },
-      { to: "/drivers", label: "Drivers" },
+      { to: "/regional/assign",  label: "Assign Drivers" },
+      { to: "/regional/profile", label: "Profile" },
     ],
     driver: [{ to: "/driver", label: "My Profile" }],
   };
@@ -27,7 +26,7 @@ export default function Sidebar() {
   const links = linksByRole[role] || [];
 
   return (
-    <aside className="w-60 bg-slate-800 text-white flex flex-col h-screen">
+    <aside className="w-60 bg-slate-800 text-white flex flex-col h-screen sticky top-0">
       <div className="p-4 border-b border-slate-700">
         <h2 className="text-xl font-bold">Menu</h2>
       </div>

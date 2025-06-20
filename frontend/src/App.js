@@ -16,6 +16,7 @@ import DriverDashboard from "./pages/DriverDashBoard.jsx";
 import RegionalVendorProfile from "./pages/RegionalVendorProfile.jsx";
 import RegionalVendorDashboard from "./pages/RegionalVendorDashBoard.jsx";
 import RegionalVendorVehicles from "./pages/RegionalVendorVehicles.jsx";
+import AssignDriverToVehicle from "./pages/AssignDriverToVehicles.jsx";
 
 /* helper component: send user to the right dashboard */
 function RedirectByRole() {
@@ -71,6 +72,7 @@ export default function App() {
               element={<RegionalVendorProfile />}
             />
             <Route path="/regional/vehicles"  element={<RegionalVendorVehicles />} />
+            <Route path="/regional/assign" element={<AssignDriverToVehicle />} />
             {/* other /regional routes */}
           </Route>
 

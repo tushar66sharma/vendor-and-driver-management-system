@@ -20,6 +20,11 @@ const driverDocumentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  vehicleId: {                // ← new field
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Vehicle',
+    default: null,
+  },
 });
 
 module.exports = mongoose.model('DriverDocument', driverDocumentSchema);

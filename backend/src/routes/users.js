@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const authMw  = require('../middleware/auth');
 
 // GET /api/users: list all users with permissions
 router.get('/', async (req, res) => {
@@ -54,6 +55,22 @@ router.patch('/:id/role', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Failed to update role' });
+  }
+});
+
+router.get('/drivers/region', authMw, async (req, res) => {
+  try {
+    if (req.user.role !== 'regional_vendor') {
+      return res.status(403).json({ msg: 'Access denied' });
+    }
+    const drivers = await User.find({
+      role: 'driver',
+      region: req.user.region,
+    }).select('_id firstName lastName email');
+    res.json(drivers);
+  } catch (err) {
+    console.error('Fetch drivers error:', err);
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 

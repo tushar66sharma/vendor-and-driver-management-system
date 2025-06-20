@@ -4,6 +4,7 @@ const router   = express.Router();
 const authMw   = require('../middleware/auth');
 const upload   = require('../config/upload');
 const Vehicle  = require('../models/Vehicle');
+const DriverDoc = require('../models/DriverDocument');
 
 /* ----------  ADD VEHICLE  ---------- */
 router.post(
@@ -33,7 +34,7 @@ router.post(
         registrationNumber,
         model,
         seatingCapacity: Number(seatingCapacity),
-        fuelType,
+        fuelType:fuelType.toLowerCase(),
         region,
         rcFile:        `/uploads/${req.files.rcFile[0].filename}`,
         permitFile:    `/uploads/${req.files.permitFile[0].filename}`,
@@ -51,12 +52,78 @@ router.post(
 
 /* ----------  LIST VEHICLES (region or createdBy)  ---------- */
 router.get('/', authMw, async (req, res) => {
-  const query = req.user.region
-    ? { $or: [{ region: req.user.region }, { createdBy: req.user.userId }] }
-    : {        createdBy: req.user.userId };
-
+  const query = { region: req.user.region };
   const list = await Vehicle.find(query).select('-__v').sort('-createdAt');
   res.json(list);
 });
 
+router.patch('/:vehicleId/assign-driver', authMw, async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
+    const { driverId }  = req.body;
+    if (!driverId) 
+      return res.status(400).json({ msg: 'Driver ID is required' });
+
+    // 1) Verify driver has a document entry
+    const doc = await DriverDoc.findOne({ userId: driverId });
+    if (!doc) {
+      return res
+        .status(400)
+        .json({ msg: 'Cannot assign: driver has no uploaded document' });
+    }
+
+    // 2) Update vehicle
+    const vehicle = await Vehicle.findByIdAndUpdate(
+      vehicleId,
+      { $set: { assigned: true, driverId } },
+      { new: true }
+    );
+    if (!vehicle) 
+      return res.status(404).json({ msg: 'Vehicle not found' });
+
+    // 3) Update driver’s document record
+    doc.vehicleId = vehicle._id;
+    await doc.save();
+
+    res.json(vehicle);
+  } catch (err) {
+    console.error('Assign driver error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+
+});
+
+
+router.patch('/:vehicleId/unassign-driver', authMw, async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
+
+    // Find vehicle
+    const vehicle = await Vehicle.findById(vehicleId);
+    if (!vehicle) return res.status(404).json({ msg: 'Vehicle not found' });
+
+    const oldDriverId = vehicle.driverId;
+    if (!oldDriverId) {
+      return res.status(400).json({ msg: 'No driver currently assigned' });
+    }
+
+    // Clear vehicle record
+    vehicle.driverId = null;
+    vehicle.assigned = false;
+    await vehicle.save();
+
+    // Clear driver document.vehicleId
+    await DriverDoc.updateOne(
+      { userId: oldDriverId },
+      { $unset: { vehicleId: '' } }
+    );
+
+    res.json(vehicle);
+  } catch (err) {
+    console.error('Unassign driver error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
 module.exports = router;
+
