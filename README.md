@@ -12,10 +12,8 @@ A full-stack fleet management platform enabling multi‑level vendor hierarchies
 4. [Tech Stack](#tech-stack)  
 5. [Project Structure](#project-structure)  
 6. [Setup & Run](#setup--run)  
-7. [Plus Points & Evaluation Criteria](#plus-points--evaluation-criteria)  
-8. [Usage & Demonstration](#usage--demonstration)  
-9. [Contributing](#contributing)  
-10. [License](#license)  
+7. [Usage & Demonstration](#usage--demonstration)  
+
 
 ---
 
@@ -90,25 +88,30 @@ A full-stack fleet management platform enabling multi‑level vendor hierarchies
 
 ## 📂 Project Structure
 
-backend/
-├─ src/
-│ ├─ config/ # DB & multer setup
-│ ├─ middleware/ # auth.js
-│ ├─ models/ # User, Vehicle, DriverDocument, Permission…
-│ ├─ routes/ # auth.js, users.js, vehicles.js, driverDocs.js, admin.js…
-│ └─ server.js
-frontend/
-└─ src/
-├─ api/ # axiosClient.js
-├─ components/ # Sidebar.jsx, Modal.jsx, PrivateRoute.jsx
-├─ context/ # AuthContext.jsx
-├─ pages/ # SuperVendorDashBoard.jsx, Users.jsx, Roles.jsx, Permissions.jsx, Profile.jsx,
-│ RegionalVendorVehicles.jsx, DriverDashboard.jsx, AdminOverview.jsx…
-└─ App.jsx, index.jsx
-uploads/ # Static file storage for documents
+- **backend/**
+  - **src/**
+    - **config/** – Database & multer setup
+    - **middleware/** – Authentication middleware (e.g., auth.js)
+    - **models/** – Mongoose models (User, Vehicle, DriverDocument, Permission, etc.)
+    - **routes/** – API routes (auth.js, users.js, vehicles.js, driverDocs.js, admin.js, etc.)
+    - **server.js** – Main server entry point
+
+- **frontend/**
+  - **src/**
+    - **api/** – Axios client setup (axiosClient.js)
+    - **components/** – Reusable UI components (Sidebar.jsx, Modal.jsx, PrivateRoute.jsx)
+    - **context/** – React context providers (AuthContext.jsx)
+    - **pages/** – Page components (SuperVendorDashBoard.jsx, Users.jsx, Roles.jsx, Permissions.jsx, Profile.jsx, RegionalVendorVehicles.jsx, DriverDashboard.jsx, AdminOverview.jsx, etc.)
+    - **App.jsx** – Main App component
+    - **index.jsx** – Entry point for React
+
+- **uploads/** – Static file storage for uploaded documents
+
+
 
 
 ## 📂 Backend
+```bash
 cd backend
 npm install
 cp .env.example .env
@@ -116,11 +119,14 @@ cp .env.example .env
 # MONGODB_URI=your_mongo_uri
 # JWT_SECRET=your_jwt_secret
 npm run dev
-
+```
 ## 📂 Frontend
+
+```bash
 cd frontend
 npm install
 npm start
+```
 
 
 
