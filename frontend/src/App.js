@@ -17,6 +17,8 @@ import RegionalVendorProfile from "./pages/RegionalVendorProfile.jsx";
 import RegionalVendorDashboard from "./pages/RegionalVendorDashBoard.jsx";
 import RegionalVendorVehicles from "./pages/RegionalVendorVehicles.jsx";
 import AssignDriverToVehicle from "./pages/AssignDriverToVehicles.jsx";
+import RegionalVendorViewDrivers from "./pages/RegionalVendorViewDrivers.jsx";
+import SuperVendorDriverOverview from "./pages/SuperVendorDriverOverview.jsx";
 
 /* helper component: send user to the right dashboard */
 function RedirectByRole() {
@@ -51,6 +53,7 @@ export default function App() {
               path="/super/permissions"
               element={<SuperVendorPermissions />}
             />
+            <Route path="/super/driver-overview" element={<SuperVendorDriverOverview />}/>
             <Route path="/super/profile" element={<SuperVendorProfile />} />
           </Route>
 
@@ -73,6 +76,7 @@ export default function App() {
             />
             <Route path="/regional/vehicles"  element={<RegionalVendorVehicles />} />
             <Route path="/regional/assign" element={<AssignDriverToVehicle />} />
+             <Route path="/regional/licenses" element={<RegionalVendorViewDrivers />} />
             {/* other /regional routes */}
           </Route>
 

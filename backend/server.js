@@ -8,7 +8,8 @@ const statsRoutes  = require("./src/routes/stats");
 const permRoutes   = require("./src/routes/permissions");
 const userRoutes = require("./src/routes/users");
 const docRoutes  = require('./src/routes/driverDocs');
-const vehicleRoutes = require('./src/routes/vehicles')
+const vehicleRoutes = require('./src/routes/vehicles');
+const adminRoutes   = require("./src/routes/admin");
 
 
 const app = express();
@@ -23,6 +24,7 @@ app.use("/api/users", userRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/driver-docs', docRoutes);
 app.use('/api/vehicles',     vehicleRoutes); 
+app.use("/api/admin",     adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server listening on ${PORT}`));

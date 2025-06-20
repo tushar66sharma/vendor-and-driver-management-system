@@ -124,6 +124,52 @@ router.patch('/:vehicleId/unassign-driver', authMw, async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 });
+router.delete('/:vehicleId', authMw, async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
+    const vehicle = await Vehicle.findById(vehicleId);
+    if (!vehicle) return res.status(404).json({ msg: 'Vehicle not found' });
+    if (vehicle.assigned) {
+      return res
+        .status(400)
+        .json({ msg: 'Cannot delete: vehicle is assigned to a driver' });
+    }
+    await Vehicle.deleteOne({ _id: vehicleId });
+    // Also clear any driverDoc.vehicleId just in case (should not exist)
+    await DriverDoc.updateMany(
+      { vehicleId },
+      { $unset: { vehicleId: '' } }
+    );
+    res.json({ msg: 'Vehicle deleted' });
+  } catch (err) {
+    console.error('Delete vehicle error:', err);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+
+router.get(
+  '/my-assigned',
+  authMw,
+  async (req, res) => {
+    try {
+      // Only drivers should hit this
+      if (req.user.role !== 'driver') {
+        return res.status(403).json({ msg: 'Access denied' });
+      }
+      // Find vehicles where driverId matches me
+      const list = await Vehicle.find({ driverId: req.user.userId })
+        .select('-__v')
+        .sort('-createdAt');
+      res.json(list);
+    } catch (err) {
+      console.error('Fetch my-assigned error', err);
+      res.status(500).json({ msg: 'Server error' });
+    }
+  }
+);
+
+
 
 module.exports = router;
 

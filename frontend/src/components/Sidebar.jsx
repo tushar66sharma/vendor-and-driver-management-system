@@ -9,14 +9,16 @@ export default function Sidebar() {
     super_vendor: [
       { to: "/super", label: "Main Dashboard" },
       { to: "/super/users", label: "Users" },
-      { to: "/super/roles", label: "Roles" },
+      { to: "/super/roles", label: "Role Change" },
       { to: "/super/permissions", label: "Permissions" },
+      { to: "/super/driver-overview",  label: "Driver Overview" },
       { to: "/super/profile", label: "Profile" },
     ],
 
     regional_vendor: [
       { to: "/regional", label: "Dashboard" },
       { to: "/regional/vehicles", label: "Vehicles" },
+      { to: "/regional/licenses", label: "Drivers" },
       { to: "/regional/assign",  label: "Assign Drivers" },
       { to: "/regional/profile", label: "Profile" },
     ],
