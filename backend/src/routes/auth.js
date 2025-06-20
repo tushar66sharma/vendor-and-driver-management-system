@@ -78,4 +78,11 @@ router.patch('/me', authMw, async (req, res) => {
   res.json(user);
 });
 
+router.get('/me/permissions', authMw, async (req, res) => {
+  // authMw has set req.user.userId
+  const user = await User.findById(req.user.userId).select('customPermissions');
+  if (!user) return res.status(404).json({ msg: 'User not found' });
+  return res.json({ permissions: user.customPermissions });
+});
+
 module.exports = router;

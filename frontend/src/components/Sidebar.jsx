@@ -12,6 +12,7 @@ export default function Sidebar() {
       { to: "/super/roles", label: "Role Change" },
       { to: "/super/permissions", label: "Permissions" },
       { to: "/super/driver-overview",  label: "Driver Overview" },
+      { to: '/super/vehicles', label: 'Manage Vehicles' },
       { to: "/super/profile", label: "Profile" },
     ],
 
@@ -19,7 +20,7 @@ export default function Sidebar() {
       { to: "/regional", label: "Dashboard" },
       { to: "/regional/vehicles", label: "Vehicles" },
       { to: "/regional/licenses", label: "Drivers" },
-      { to: "/regional/assign",  label: "Assign Drivers" },
+      { to: "/regional/assign",  label: "Assign Vehicles" },
       { to: "/regional/profile", label: "Profile" },
     ],
     driver: [{ to: "/driver", label: "My Profile" }],

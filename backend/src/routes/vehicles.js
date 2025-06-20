@@ -50,13 +50,21 @@ router.post(
   }
 );
 
-/* ----------  LIST VEHICLES (region or createdBy)  ---------- */
+/* ----------  LIST VEHICLES FOR REGIONAL/DRIVER ---------- */
 router.get('/', authMw, async (req, res) => {
   const query = { region: req.user.region };
   const list = await Vehicle.find(query).select('-__v').sort('-createdAt');
   res.json(list);
 });
-
+/* ----------  LIST ALL VEHICLES FOR SUPER VENDOR ---------- */
+router.get('/all', authMw, async (req, res) => {
+  if (req.user.role !== 'super_vendor') {
+    return res.status(403).json({ msg: 'Access denied' });
+  }
+  const list = await Vehicle.find({}).select('-__v').sort('-createdAt');
+  res.json(list);
+});
+/* ----------  ASSIGN DRIVER ---------- */
 router.patch('/:vehicleId/assign-driver', authMw, async (req, res) => {
   try {
     const { vehicleId } = req.params;
@@ -93,7 +101,7 @@ router.patch('/:vehicleId/assign-driver', authMw, async (req, res) => {
 
 });
 
-
+/* ----------  UNASSIGN DRIVER ---------- */
 router.patch('/:vehicleId/unassign-driver', authMw, async (req, res) => {
   try {
     const { vehicleId } = req.params;
@@ -124,6 +132,8 @@ router.patch('/:vehicleId/unassign-driver', authMw, async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 });
+
+/* ----------  DELETE VEHICLE ---------- */
 router.delete('/:vehicleId', authMw, async (req, res) => {
   try {
     const { vehicleId } = req.params;
@@ -147,7 +157,7 @@ router.delete('/:vehicleId', authMw, async (req, res) => {
   }
 });
 
-
+/* ----------  DRIVER OWN ASSIGNED ---------- */
 router.get(
   '/my-assigned',
   authMw,

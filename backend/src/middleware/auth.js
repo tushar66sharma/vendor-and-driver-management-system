@@ -19,7 +19,8 @@ module.exports = async function(req, res, next) {
     req.user = {
       userId: decoded.userId,
       role: user.role,
-      region: user.region
+      region: user.region,
+      customPermissions: user.customPermissions || []
     };
 
     next();

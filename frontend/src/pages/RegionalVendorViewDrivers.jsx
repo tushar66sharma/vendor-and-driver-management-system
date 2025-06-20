@@ -1,19 +1,52 @@
-import { useEffect, useState } from 'react';
+// src/pages/RegionalVendorViewDrivers.jsx
+import { useState, useEffect } from 'react';
 import api from '../api/axiosClient';
 import Sidebar from '../components/Sidebar';
 
 export default function RegionalVendorViewDrivers() {
-  const [docs, setDocs] = useState([]);
+  const [docs, setDocs]         = useState([]);
+  const [permissions, setPermissions] = useState([]);
+  const [msg, setMsg]           = useState('');
+  const [loading, setLoading]   = useState(true);
 
   // Base URL without /api
   const root = (process.env.REACT_APP_API_URL || 'http://localhost:5000/api')
-                  .replace(/\/api$/, '');
+                 .replace(/\/api$/, '');
 
   useEffect(() => {
-    api.get('/driver-docs/region')
-       .then(res => setDocs(res.data))
-       .catch(err => console.error(err));
+    (async () => {
+      try {
+        // 1) fetch current user (has customPermissions & region)
+        const { data: me } = await api.get('/auth/me');
+        setPermissions(me.customPermissions || []);
+
+        // 2) check “View Drivers”
+        if (me.customPermissions?.includes('View Drivers')) {
+          // 3) fetch docs for my region
+          const res = await api.get('/driver-docs/region');
+          setDocs(res.data);
+        } else {
+          setMsg('You do not have permission to view drivers.');
+        }
+      } catch (err) {
+        console.error(err);
+        setMsg('Error loading drivers.');
+      } finally {
+        setLoading(false);
+      }
+    })();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen bg-gray-50">
+        <Sidebar />
+        <main className="flex-1 p-8">
+          <p>Loading…</p>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -21,14 +54,23 @@ export default function RegionalVendorViewDrivers() {
 
       <main className="flex-1 p-8">
         <h1 className="text-3xl font-bold mb-6">
-          My Region’s Drivers & Licenses
+          Drivers and License
         </h1>
-        
-        {docs.length === 0 ? (
+
+        {/* permission or fetch error */}
+        {msg && docs.length === 0 && (
+          <p className="text-black/70">{msg}</p>
+        )}
+
+        {/* no drivers but permitted */}
+        {!msg && docs.length === 0 && (
           <p className="text-gray-600">
             No drivers found in your region.
           </p>
-        ) : (
+        )}
+
+        {/* drivers table */}
+        {!msg && docs.length > 0 && (
           <div className="overflow-x-auto bg-white rounded shadow">
             <table className="min-w-full text-sm">
               <thead className="bg-gray-100">

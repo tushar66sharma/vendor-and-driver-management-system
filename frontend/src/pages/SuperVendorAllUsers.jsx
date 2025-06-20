@@ -4,9 +4,10 @@ import api from "../api/axiosClient";
 import Sidebar from "../components/Sidebar";
 
 export default function SuperVendorAllUsers() {
-  const [users, setUsers]           = useState([]);
-  const [perms, setPerms]           = useState([]);
-  const [filterRole, setFilterRole] = useState("all");
+  const [users, setUsers]             = useState([]);
+  const [perms, setPerms]             = useState([]);
+  const [filterRole, setFilterRole]   = useState("all");
+  const [notification, setNotification] = useState({ msg: "", color: "" });
 
   useEffect(() => {
     // fetch users & master permissions
@@ -48,10 +49,21 @@ export default function SuperVendorAllUsers() {
   // Persist one user’s permissions
   const saveUser = async (userId) => {
     const user = users.find((u) => u._id === userId);
-    await api.patch(`/users/${userId}/permissions`, {
-      customPermissions: user.customPermissions,
-    });
-    // You could show a toast here if you like
+    try {
+      await api.patch(`/users/${userId}/permissions`, {
+        customPermissions: user.customPermissions,
+      });
+
+      // Show "Saved!" notification
+      setNotification({ msg: "Saved!", color: "green" });
+      setTimeout(() => setNotification({ msg: "", color: "" }), 3000);
+    } catch (err) {
+      setNotification({
+        msg: err.response?.data?.msg || "Save failed",
+        color: "red",
+      });
+      setTimeout(() => setNotification({ msg: "", color: "" }), 3000);
+    }
   };
 
   return (
@@ -60,6 +72,19 @@ export default function SuperVendorAllUsers() {
 
       <main className="flex-1 bg-gray-100 p-8 overflow-auto">
         <h1 className="text-3xl font-bold mb-6">All Users & Permissions</h1>
+
+        {/* Notification */}
+        {notification.msg && (
+          <div
+            className={`mb-4 p-3 rounded ${
+              notification.color === "green"
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+            }`}
+          >
+            {notification.msg}
+          </div>
+        )}
 
         {/* Role Filter */}
         <div className="mb-4">
@@ -135,6 +160,7 @@ export default function SuperVendorAllUsers() {
                   </td>
                 </tr>
               ))}
+
               {displayed.length === 0 && (
                 <tr>
                   <td

@@ -10,6 +10,7 @@ const userRoutes = require("./src/routes/users");
 const docRoutes  = require('./src/routes/driverDocs');
 const vehicleRoutes = require('./src/routes/vehicles');
 const adminRoutes   = require("./src/routes/admin");
+const regionRoutes = require('./src/routes/region');
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/driver-docs', docRoutes);
 app.use('/api/vehicles',     vehicleRoutes); 
 app.use("/api/admin",     adminRoutes);
+app.use('/api/region', regionRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server listening on ${PORT}`));
