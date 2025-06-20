@@ -17,13 +17,11 @@ export default function Sidebar() {
 
     regional_vendor: [
       { to: "/regional", label: "Dashboard" },
+      { to: "/regional/profile", label: "Profile" },
+      { to: "/regional/vehicles", label: "Vehicles" },
       { to: "/drivers", label: "Drivers" },
-      { to: "/profile", label: "Profile" },
     ],
-    driver: [
-      { to: "/driver", label: "My Trips" },
-      { to: "/profile", label: "Profile" },
-    ],
+    driver: [{ to: "/driver", label: "My Profile" }],
   };
 
   const links = linksByRole[role] || [];

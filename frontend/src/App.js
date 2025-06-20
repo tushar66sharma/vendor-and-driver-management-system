@@ -12,6 +12,10 @@ import SuperVendorAllUsers from "./pages/SuperVendorAllUsers.jsx";
 import SuperVendorAllRoles from "./pages/SuperVendorAllRoles.jsx";
 import SuperVendorPermissions from "./pages/SuperVendorPermissions.jsx";
 import SuperVendorProfile from "./pages/SuperVendorProfile.jsx";
+import DriverDashboard from "./pages/DriverDashBoard.jsx";
+import RegionalVendorProfile from "./pages/RegionalVendorProfile.jsx";
+import RegionalVendorDashboard from "./pages/RegionalVendorDashBoard.jsx";
+import RegionalVendorVehicles from "./pages/RegionalVendorVehicles.jsx";
 
 /* helper component: send user to the right dashboard */
 function RedirectByRole() {
@@ -42,9 +46,11 @@ export default function App() {
             <Route path="/super/*" element={<SuperDash />} />
             <Route path="/super/users" element={<SuperVendorAllUsers />} />
             <Route path="/super/roles" element={<SuperVendorAllRoles />} />
-            <Route path="/super/permissions" element={<SuperVendorPermissions />} />
+            <Route
+              path="/super/permissions"
+              element={<SuperVendorPermissions />}
+            />
             <Route path="/super/profile" element={<SuperVendorProfile />} />
-
           </Route>
 
           <Route element={<PrivateRoute allowed={["regional_vendor"]} />}>
@@ -53,6 +59,19 @@ export default function App() {
 
           <Route element={<PrivateRoute allowed={["driver"]} />}>
             <Route path="/driver/*" element={<DriverDash />} />
+          </Route>
+          <Route element={<PrivateRoute allowed={["driver"]} />}>
+            <Route path="/driver" element={<DriverDashboard />} />
+          </Route>
+
+          <Route element={<PrivateRoute allowed={["regional_vendor"]} />}>
+            <Route path="/regional" element={<RegionalVendorDashboard />} />
+            <Route
+              path="/regional/profile"
+              element={<RegionalVendorProfile />}
+            />
+            <Route path="/regional/vehicles"  element={<RegionalVendorVehicles />} />
+            {/* other /regional routes */}
           </Route>
 
           {/* fallback */}
