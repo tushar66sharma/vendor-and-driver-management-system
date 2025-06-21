@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import api from '../api/axiosClient';
 import Sidebar from '../components/Sidebar';
 
-const ALL_ROLES   = ['regional_vendor', 'city_vendor', 'local_vendor', 'driver'];
+const ALL_ROLES   = ['regional_vendor', 'driver'];
 const ROLE_LABELS = {
   all:              'All Roles',
   regional_vendor:  'Regional Vendor',

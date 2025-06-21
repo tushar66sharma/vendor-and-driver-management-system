@@ -4,33 +4,27 @@ import api from "../api/axiosClient";
 import Sidebar from "../components/Sidebar";
 
 export default function SuperVendorAllUsers() {
-  const [users, setUsers]             = useState([]);
-  const [perms, setPerms]             = useState([]);
-  const [filterRole, setFilterRole]   = useState("all");
+  const [users, setUsers] = useState([]);
+  const [perms, setPerms] = useState([]);
+  const [filterRole, setFilterRole] = useState("all");
   const [notification, setNotification] = useState({ msg: "", color: "" });
 
   useEffect(() => {
-    // fetch users & master permissions
     api.get("/users").then((r) => setUsers(r.data));
     api.get("/permissions").then((r) => setPerms(r.data));
   }, []);
 
-  // Map roles to user‐friendly labels
   const ROLE_LABELS = {
-    all:              "All Roles",
-    super_vendor:     "Super Vendors",
-    regional_vendor:  "Regional Vendors",
-    // city_vendor:      "City Vendors",
-    // local_vendor:     "Local Vendors",
-    driver:           "Drivers",
+    all: "All Roles",
+    super_vendor: "Super Vendors",
+    regional_vendor: "Regional Vendors",
+    driver: "Drivers",
   };
 
-  // Apply role filter
   const displayed = users.filter((u) =>
     filterRole === "all" ? true : u.role === filterRole
   );
 
-  // Toggle permission checkbox in local state
   const togglePerm = (userId, permName, enabled) => {
     setUsers((list) =>
       list.map((u) =>
@@ -46,34 +40,29 @@ export default function SuperVendorAllUsers() {
     );
   };
 
-  // Persist one user’s permissions
   const saveUser = async (userId) => {
     const user = users.find((u) => u._id === userId);
     try {
       await api.patch(`/users/${userId}/permissions`, {
         customPermissions: user.customPermissions,
       });
-
-      // Show "Saved!" notification
       setNotification({ msg: "Saved!", color: "green" });
-      setTimeout(() => setNotification({ msg: "", color: "" }), 3000);
     } catch (err) {
       setNotification({
         msg: err.response?.data?.msg || "Save failed",
         color: "red",
       });
-      setTimeout(() => setNotification({ msg: "", color: "" }), 3000);
     }
+    setTimeout(() => setNotification({ msg: "", color: "" }), 3000);
   };
 
   return (
     <div className="flex min-h-screen">
       <Sidebar />
 
-      <main className="flex-1 bg-gray-100 p-8 overflow-auto">
+      <main className="flex-1 bg-gray-100 p-8 flex flex-col">
         <h1 className="text-3xl font-bold mb-6">All Users & Permissions</h1>
 
-        {/* Notification */}
         {notification.msg && (
           <div
             className={`mb-4 p-3 rounded ${
@@ -86,7 +75,6 @@ export default function SuperVendorAllUsers() {
           </div>
         )}
 
-        {/* Role Filter */}
         <div className="mb-4">
           <label className="mr-2 font-medium">Filter by role:</label>
           <select
@@ -102,19 +90,32 @@ export default function SuperVendorAllUsers() {
           </select>
         </div>
 
-        <div className="bg-white rounded shadow overflow-auto">
+        {/* Table container: fixed max height so body scrolls */}
+        <div className="bg-white rounded shadow overflow-auto flex-1 max-h-[600px]">
           <table className="min-w-full text-sm">
-            <thead className="bg-slate-100">
-              <tr>
-                <th className="p-3 text-left">Name</th>
-                <th className="p-3 text-left">Email</th>
-                <th className="p-3 text-left">Role</th>
+            <thead>
+              <tr className="bg-slate-100">
+                {/* Add sticky to each header cell */}
+                <th className="p-3 text-left sticky top-0 bg-slate-100 z-10">
+                  Name
+                </th>
+                <th className="p-3 text-left sticky top-0 bg-slate-100 z-10">
+                  Email
+                </th>
+                <th className="p-3 text-left sticky top-0 bg-slate-100 z-10">
+                  Role
+                </th>
                 {perms.map((p) => (
-                  <th key={p.permissionName} className="p-3 text-center">
+                  <th
+                    key={p.permissionName}
+                    className="p-3 text-center sticky top-0 bg-slate-100 z-10"
+                  >
                     {p.permissionName}
                   </th>
                 ))}
-                <th className="p-3 text-center">Actions</th>
+                <th className="p-3 text-center sticky top-0 bg-slate-100 z-10">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
