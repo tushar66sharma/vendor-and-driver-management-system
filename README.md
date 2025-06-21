@@ -122,7 +122,8 @@ npm start
 - **Demo Video**  
   [Watch Demo Video](https://drive.google.com/file/d/1N7Wn0Y7latzaUOSt14zwoaQYpo_jKfxh/view?usp=drive_link)
 - **Demo ScreenShots**  
-  ![Demo ScreenShots](https://drive.google.com/drive/folders/1w2LPryJp4y8DQVNSORKNFe0iKxbYk3YU?usp=drive_link)
+  [Demo Screenshots](https://drive.google.com/drive/folders/1w2LPryJp4y8DQVNSORKNFe0iKxbYk3YU?usp=drive_link)
+
 
 
 
