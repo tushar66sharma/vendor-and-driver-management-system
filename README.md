@@ -66,16 +66,6 @@ A full-stack fleet management platform enabling multi‑level vendor hierarchies
 
 ---
 
-## 🏛️ Architecture & Diagrams
-
-- **ER Diagram**  
-  ![ER Diagram](./ER_Diagram.png)
-- **System Flow**  
-  ![Flow Diagram](./Flow%20Diagram.png)
-- **Vendor Hierarchy**  
-  ![Hierarchy Diagram](./Hierarchy_Diagram.png)
-
----
 
 ## 🛠️ Tech Stack
 
@@ -127,7 +117,16 @@ cd frontend
 npm install
 npm start
 ```
+## 🏛️ Demo Video and ScreenShots
 
+- **Demo Video**  
+  [Watch Demo Video](https://drive.google.com/file/d/1N7Wn0Y7latzaUOSt14zwoaQYpo_jKfxh/view?usp=drive_link)
+- **Demo ScreenShots**  
+  ![Demo ScreenShots](https://drive.google.com/drive/folders/1w2LPryJp4y8DQVNSORKNFe0iKxbYk3YU?usp=drive_link)
+
+
+
+---
 
 
 
